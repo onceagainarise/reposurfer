@@ -1,0 +1,52 @@
+# ================================
+# Python
+# ================================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env
+.env.*
+
+# ================================
+# RepoSurfer generated data
+# ================================
+# Cloned repositories & snapshots
+storage/repos/
+storage/**/source/
+
+# JSON outputs (generated artifacts)
+storage/**/*.json
+
+# ================================
+# Git / OS noise
+# ================================
+.gitmodules
+.gitconfig
+.gitignore~
+
+# macOS
+.DS_Store
+
+# Linux
+*.swp
+*.swo
+
+# Windows
+Thumbs.db
+
+# ================================
+# IDEs / Editors
+# ================================
+.vscode/
+.idea/
+*.iml
+
+# ================================
+# Logs (future)
+# ================================
+logs/
+*.log
