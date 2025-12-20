@@ -41,7 +41,7 @@ def run_phase0(repo_url: str):
               client.get_tags(repo))
 
     # --- Clone + tree ---
-    source_path = cloner.clone_repo(repo_url)
+    source_path = cloner.clone_repo(repo_url, base_path)
     tree = tree_builder.build_tree(source_path)
 
     save_json(f"{base_path}/tree.json", tree)

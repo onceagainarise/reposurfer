@@ -49,5 +49,5 @@ def run_phase1(repo_path:str):
 
 if __name__ == "__main__":
 
-    REPO_PATH = "storage/repos/owner_repo"
+    REPO_PATH = "storage/repos/psf__requests"
     run_phase1(REPO_PATH)
