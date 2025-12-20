@@ -1,7 +1,4 @@
-from phase0.tree_builder import FileTreeBuilder
+from phase1.language_detector import is_python_file
 
-builder = FileTreeBuilder()
-tree = builder.build_tree("storage/repos/psf_requests/source")
-
-print(len(tree))
-print(tree[:10])
+print(is_python_file({"path": "src/main.py"}))    # True
+print(is_python_file({"path": "README.md"}))     # False
