@@ -24,13 +24,13 @@ def run_retrieval(repo_path: str, query: str):
     store.client.count(store.collection, exact=True).count
 )
 
+
+
     for r in results:
-        print(
-            f"\n[{r['source']}] {r['symbol_id']} "
-            f"({r['symbol_type']}) "
-            f"score={r['score']:.3f}"
-        )
-        print(f"File: {r['file']}")
+        print(f"[hybrid] {r['id']} ({r['type']}) score={r['score']:.3f}")
+        print("File:", r.get("file",""))
+        print(r.get("text","")[:200])
+
 
 if __name__ == "__main__":
     run_retrieval(
