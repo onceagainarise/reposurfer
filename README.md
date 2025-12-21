@@ -21,3 +21,5 @@ with this commit we have started building the phase2 we first designed a symbol_
 i have used qdrant database to store the embeddings generated using sentence transformers all-mini-l6-v2 . as of now the embeddings are not being stored permanently until phase3 so lets go!
 
 made some changes to over the embedded data and retrieve it . there are some issues but will be solved with the later commits .
+
+sovled the issues related to the retrival and now we are able to retrieve the embeddings along with the confidence score so that's good.
