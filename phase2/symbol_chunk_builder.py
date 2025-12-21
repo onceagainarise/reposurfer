@@ -21,36 +21,95 @@ class SymbolChunkBuilder:
         return chunks
 
     def _build_chunk(self, node: dict):
-        if node['type']!="class":
-            return None
         rel_path = node["file"]
-        abs_path = os.path.join(self.repo_root,"source", rel_path)
+        abs_path = os.path.join(self.repo_root, "source", rel_path)
+    
         if not os.path.exists(abs_path):
             return None
-        
+    
         tree, source_lines = self._parse_file(abs_path)
+    
+        # -------- CLASS SUPPORT --------
+        if node["type"] == "class":
+            for ast_node in ast.walk(tree):
+                if isinstance(ast_node, ast.ClassDef) and ast_node.name == node["id"]:
+                    return self._make_chunk(
+                        symbol_id=node["id"],
+                        symbol_type="class",
+                        ast_node=ast_node,
+                        source_lines=source_lines,
+                        rel_path=rel_path,
+                        metadata={}
+                    )
+    
+        # -------- FUNCTION SUPPORT --------
+        if node["type"] == "function":
+            for ast_node in ast.walk(tree):
+                if isinstance(ast_node, ast.FunctionDef) and ast_node.name == node["id"]:
+                    return self._make_chunk(
+                        symbol_id=node["id"],
+                        symbol_type="function",
+                        ast_node=ast_node,
+                        source_lines=source_lines,
+                        rel_path=rel_path,
+                        metadata={}
+                    )
+        # -------- METHOD SUPPORT --------
+        if node["type"] == "method":
+            if "." not in node["id"]:
+                return None
+    
+            class_name, method_name = node["id"].split(".", 1)
+    
+            for ast_node in ast.walk(tree):
+                if isinstance(ast_node, ast.ClassDef) and ast_node.name == class_name:
+                    for body_item in ast_node.body:
+                        if isinstance(body_item, ast.FunctionDef) and body_item.name == method_name:
+                            return self._make_chunk(
+                                symbol_id=node["id"],
+                                symbol_type="method",
+                                ast_node=body_item,
+                                source_lines=source_lines,
+                                rel_path=rel_path,
+                                metadata={
+                                    "parent_class": class_name
+                                }
+                            )
+    
+        
+            return None
+    
+    def _make_chunk(
+        self,
+        symbol_id: str,
+        symbol_type: str,
+        ast_node,
+        source_lines,
+        rel_path: str,
+        metadata: dict
+):    
+        docstring = ast.get_docstring(ast_node)
+        code_text = self._extract_node_text(ast_node, source_lines)
+        if len(code_text.strip()) < 30:
+            return None
 
-        for ast_node in ast.walk(tree):
-            if isinstance(ast_node,ast.ClassDef) and ast_node.name == node["id"]:
-                code_text = self._extract_node_text(ast_node, source_lines)
-                docstring = ast.get_docstring(ast_node)
-
-                text_parts=[
-                    f"class {ast_node.name} defines in {rel_path}",
-
-                ]
-                if docstring:
-                    text_parts.append(f"docstring:\n{docstring}")
-                text_parts.append("code:\n"+ code_text)
-                
-                return {
-                "symbol_id": node["id"],
-                "symbol_type": "class",
-                "file": rel_path,
-                "text": "\n\n".join(text_parts),
-                "metadata": {}                   
-                }
-        return None
+        text_parts = [
+            f"{symbol_type.capitalize()} {symbol_id} defined in {rel_path}"
+        ]
+    
+        if docstring:
+            text_parts.append(f"Docstring:\n{docstring}")
+    
+        text_parts.append("Code:\n" + code_text)
+    
+        return {
+            "symbol_id": symbol_id,
+            "symbol_type": symbol_type,
+            "file": rel_path,
+            "text": "\n\n".join(text_parts),
+            "metadata": metadata
+        }
+    
 
 
     def _parse_file(self, file_path: str):
