@@ -18,3 +18,4 @@ let's move to the phase2 that is chunking , generating embedding and storing it 
 
 with this commit we have started building the phase2 we first designed a symbol_chunk_loader file in order to convert all symbols(classes , method and functions) into chunks before generating the embeddings.
 
+i have used qdrant database to store the embeddings generated using sentence transformers all-mini-l6-v2 . as of now the embeddings are not being stored permanently until phase3 so lets go!
