@@ -1,4 +1,4 @@
-from phase1.language_detector import is_python_file
+from phase3.llm_client import LLMClient
 
-print(is_python_file({"path": "src/main.py"}))    # True
-print(is_python_file({"path": "README.md"}))     # False
+llm = LLMClient()
+print(llm.explain("Explain why Response.json is relevant to JSON decode errors."))
