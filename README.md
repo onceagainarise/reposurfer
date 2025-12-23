@@ -183,7 +183,11 @@ made some changes to over the embedded data and retrieve it . there are some iss
 sovled the issues related to the retrival and now I AM able to retrieve the embeddings along with the confidence score so that's good.
 and with the latest commit which take in account of both graph and semantic comparision in giving the confidence score i am done with the phase2 which was one of the most important phase and now will move onto to the llm reasoning stage. the BRAIN.
 
+
 with this commit i have started building the phase3 of the project of integrating the llm for reasoning .
+
+
+As of now i have completed the basic pipeline of repo-surfer and now we would try to create a user interface for it using the cli and access it using cli commands and for that we would require to resturcture the folder sturcture a little bit as shown in this commit
 
 As of right now the main pipeline for the whole process has been completed and from now on the main challenge would start.
 repo surfer currently only performs surface level reasoning which is good for small repos but for complex architecture it would fail so we would now work on imporving the creation of graph, symbol tree, embedding and optimizing the retreival process and also provide a ui for user to use the repo surfer since as of now it is only an engine without an outside body of car to drive it.
