@@ -197,3 +197,7 @@ now with this i have made the basic structure of how the orchestrator should loo
 i have done some changes and for now most of the commits would be related to the structural changes since these are done for long term and in th development of the mvp.recreated the whole architecture and moving the files in their proper desiginated places.
 
 with that i am done with completing the command line interface for the reposurfer so that any one cna use it by cloning the repo. it still consists of some minor issue which i would solve in the later issue and then we can begin with optimizing and improving the reposurfer to make it more efficient , reliable and durable.
+
+DONE WITH SOLVING ALL THE ISSUES , WOULD UPDATE THE README TO GIVE USER GUIDE TO REPO SURFER.
+
+now will work on improving it!!!!
