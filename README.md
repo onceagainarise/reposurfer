@@ -194,4 +194,5 @@ repo surfer currently only performs surface level reasoning which is good for sm
 
 now with this i have made the basic structure of how the orchestrator should look like and now i would change each modules by removing individual runners and combining the small funcitons into a single class to make the code more modular.
 
-i have done some changes and for now most of the commits would be related to the structural changes since these are done for long term and in th development of the mvp.
+i have done some changes and for now most of the commits would be related to the structural changes since these are done for long term and in th development of the mvp.recreated the whole architecture and moving the files in their proper desiginated places.
+
