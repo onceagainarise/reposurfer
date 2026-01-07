@@ -204,4 +204,13 @@ now will work on improving it!!!!
 
 BACK AGAIN !
 
-Now will start woking with upgrading it and taking it to the next level and creating the mvp
+Now will start woking with upgrading it and taking it to the next level and creating the mvp.
+
+the main concerns regarding the mvp are four which are as follows:
+1) Enhance LLM reasoning to provide detailed, specific responses with exact locations and root cause analysis.
+
+2) Implement contextual memory system for follow-up questions and conversation continuity.
+
+3) Expand Q&A capabilities to handle general repo questions and guidance without code generation.
+
+4) Simplify CLI interface and commands for better user experience.
