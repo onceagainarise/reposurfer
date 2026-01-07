@@ -35,11 +35,11 @@ class LLMClient:
 
         return response.choices[0].message.content
     
-    def generate(self, messages, max_tokens=400):
+    def generate(self, messages, max_tokens=800):  # Increased for detailed responses
         response = self.client.chat.completions.create(
             model = self.model,
             messages = messages,
-            temperature = 0.2,
+            temperature = 0.1,  # Lower for more consistent output
             max_tokens = max_tokens,
         )
         return response.choices[0].message.content

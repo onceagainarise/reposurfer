@@ -14,20 +14,69 @@ class RepoSurferApp:
         """
         Full indexing pipeline (Phase 0 → Phase 2.3)
         """
+        print("🚀 Starting repository indexing...")
+        
+        # Phase 0: Clone and fetch metadata
+        print("📥 Phase 0: Cloning repository...")
         run_phase0(repo_url)
 
         owner, name = repo_url.rstrip("/").split("/")[-2:]
         repo_dir = self.storage_root / f"{owner}__{name}"
 
+        # Phase 1: Static analysis
+        print("🔍 Phase 1: Analyzing code structure...")
         run_phase1(str(repo_dir))
         run_phase1_7(str(repo_dir))
+
+        # Phase 2: Semantic processing
+        print("🧠 Phase 2: Building semantic index...")
         run_phase2(str(repo_dir))
         run_embedding(str(repo_dir))
 
-        print("✅ Repository indexed successfully")
+        print(f"✅ Repository '{owner}/{name}' indexed successfully!")
+        print(f"📍 Stored at: {repo_dir}")
+        print("\nYou can now:")
+        print(f"  • reposurfer chat {name} \"your question\"")
+        print(f"  • reposurfer interactive {name}")
 
-    def query(self, repo_path: str, issue: str):
+    def query(self, repo_path: str, issue: str, mode: str = "auto"):
         """
-        Retrieval + reasoning
+        Enhanced query with multiple modes
         """
-        run_phase3(repo_path, issue)
+        run_phase3(repo_path, issue, mode)
+    
+    def interactive(self, repo_path: str):
+        """
+        Start interactive session
+        """
+        from reposurfer.core.reasoning.phase3_runner import run_interactive_mode
+        run_interactive_mode(repo_path)
+    
+    def list_repositories(self):
+        """List all indexed repositories"""
+        if not self.storage_root.exists():
+            print("📁 No repositories found. Use 'index_repo' to add repositories.")
+            return
+        
+        repos = [p for p in self.storage_root.iterdir() if p.is_dir()]
+        if not repos:
+            print("📁 No repositories found. Use 'index_repo' to add repositories.")
+            return
+        
+        print("📚 Indexed repositories:")
+        for repo in repos:
+            print(f"  • {repo.name}")
+    
+    def get_repo_path(self, repo_name: str) -> str:
+        """Get repository path by name"""
+        # Try exact match
+        exact_path = self.storage_root / repo_name
+        if exact_path.exists():
+            return str(exact_path)
+        
+        # Try pattern matching
+        for path in self.storage_root.iterdir():
+            if path.is_dir() and repo_name.lower() in path.name.lower():
+                return str(path)
+        
+        return None
