@@ -1,5 +1,6 @@
 import os 
 from git import Repo
+from tqdm import tqdm
 from reposurfer.config import BASE_STORAGE_PATH
 
 class RepoCloner:
@@ -17,7 +18,7 @@ class RepoCloner:
     def clone_repo(self, repo_url: str, target_path: str) -> str:
 
         """
-        Clones the repo if not already present.
+        Clones repo if not already present.
         Returns local path to repo source.
         """
         repo_dir = self._repo_dir_name(repo_url)
@@ -31,11 +32,27 @@ class RepoCloner:
         os.makedirs(repo_base_path, exist_ok=True)
 
         print(f"[RepoCloner] Cloning {repo_url} into {source_path}")
-        Repo.clone_from(repo_url, source_path)
+        
+        # Clone with progress tracking
+        try:
+            # GitPython doesn't have built-in progress, so we'll show a simple progress
+            with tqdm(total=100, desc="Cloning repository", unit="%") as pbar:
+                pbar.set_description(f"Cloning {repo_dir}")
+                
+                # Update progress at key stages
+                pbar.update(10)  # Starting
+                
+                Repo.clone_from(repo_url, source_path)
+                
+                pbar.update(80)  # Almost done
+                pbar.set_postfix({"status": "finalizing"})
+                pbar.update(10)  # Complete
+                
+                pbar.set_postfix({"status": "completed"})
+                
+        except Exception as e:
+            print(f"[RepoCloner] Clone failed: {e}")
+            raise
 
+        print(f"[RepoCloner] Clone completed: {source_path}")
         return source_path
-    
-
-    
-    
-
