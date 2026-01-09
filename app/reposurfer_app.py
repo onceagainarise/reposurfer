@@ -1,4 +1,5 @@
 from pathlib import Path
+from tqdm import tqdm
 from reposurfer.core.clone.phase0_runner import run_phase0
 from reposurfer.core.symbol_graph.phase1_runner import run_phase1
 from reposurfer.core.symbol_graph.phase1_graph_runner import run_phase1_7
@@ -12,28 +13,49 @@ class RepoSurferApp:
 
     def index_repo(self, repo_url: str):
         """
-        Full indexing pipeline (Phase 0 → Phase 2.3)
+        Full indexing pipeline (Phase 0 → Phase 2.3) with progress tracking
         """
         print("🚀 Starting repository indexing...")
         
-        # Phase 0: Clone and fetch metadata
-        print("📥 Phase 0: Cloning repository...")
-        run_phase0(repo_url)
+        # Progress tracking
+        phases = [
+            ("📥 Phase 0: Cloning repository...", "Cloning and fetching metadata"),
+            ("🔍 Phase 1: Analyzing code structure...", "Parsing Python files and extracting symbols"),
+            ("🔗 Phase 1.7: Building symbol graph...", "Creating symbol relationships"),
+            ("🧠 Phase 2: Building semantic index...", "Creating symbol chunks"),
+            ("⚡ Phase 2.3: Generating embeddings...", "Vectorizing symbols and storing in database")
+        ]
+        
+        with tqdm(phases, desc="RepoSurfer Progress", unit="phase") as pbar:
+            # Phase 0: Clone and fetch metadata
+            pbar.set_description(phases[0][0])
+            run_phase0(repo_url)
+            pbar.update(1)
 
-        owner, name = repo_url.rstrip("/").split("/")[-2:]
-        repo_dir = self.storage_root / f"{owner}__{name}"
+            owner, name = repo_url.rstrip("/").split("/")[-2:]
+            repo_dir = self.storage_root / f"{owner}__{name}"
 
-        # Phase 1: Static analysis
-        print("🔍 Phase 1: Analyzing code structure...")
-        run_phase1(str(repo_dir))
-        run_phase1_7(str(repo_dir))
+            # Phase 1: Static analysis
+            pbar.set_description(phases[1][0])
+            run_phase1(str(repo_dir))
+            pbar.update(1)
+            
+            # Phase 1.7: Graph building
+            pbar.set_description(phases[2][0])
+            run_phase1_7(str(repo_dir))
+            pbar.update(1)
 
-        # Phase 2: Semantic processing
-        print("🧠 Phase 2: Building semantic index...")
-        run_phase2(str(repo_dir))
-        run_embedding(str(repo_dir))
+            # Phase 2: Semantic processing
+            pbar.set_description(phases[3][0])
+            run_phase2(str(repo_dir))
+            pbar.update(1)
+            
+            # Phase 2.3: Embeddings
+            pbar.set_description(phases[4][0])
+            run_embedding(str(repo_dir))
+            pbar.update(1)
 
-        print(f"✅ Repository '{owner}/{name}' indexed successfully!")
+        print(f"\n✅ Repository '{owner}/{name}' indexed successfully!")
         print(f"📍 Stored at: {repo_dir}")
         print("\nYou can now:")
         print(f"  • reposurfer chat {name} \"your question\"")

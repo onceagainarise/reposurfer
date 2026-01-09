@@ -23,6 +23,24 @@ class RepoQA:
         else:
             return self._answer_general_question(query, repo_context)
     
+    def _format_retrieved_symbols(self, retrieved_symbols: list) -> str:
+        """Format retrieved symbols for context"""
+        if not retrieved_symbols:
+            return "No specific code context found."
+        
+        context_parts = []
+        for s in retrieved_symbols[:3]:  # Limit to top 3
+            symbol_info = f"""
+File: {s.get('file', 'Unknown')}
+Symbol: {s.get('id', 'Unknown')}
+Type: {s.get('type', 'Unknown')}
+Lines: {s.get('start_line', '?')}-{s.get('end_line', '?')}
+Code: {s.get('text', '')[:300]}...
+"""
+            context_parts.append(symbol_info.strip())
+        
+        return "\n\n".join(context_parts)
+    
     def _classify_question(self, query: str) -> str:
         """Classify the type of question"""
         query_lower = query.lower()
@@ -46,6 +64,10 @@ class RepoQA:
         
         context = self.memory.get_context_for_query(query)
         
+        # Get retrieved symbols if available
+        retrieved_symbols = repo_context.get('retrieved_symbols', [])
+        code_context = self._format_retrieved_symbols(retrieved_symbols)
+        
         prompt = f"""
 Context: {context}
 
@@ -57,12 +79,17 @@ Repository Information:
 - Main Language: {repo_context.get('language', 'Unknown') if repo_context else 'Unknown'}
 - Files: {repo_context.get('file_count', 'Unknown') if repo_context else 'Unknown'} files
 
+Relevant Code Context:
+{code_context}
+
 Instructions:
-1. Provide a clear, concise answer about the repository
+1. Provide a clear, concise answer about the repository based on ALL available information
 2. Focus on the main purpose and functionality
-3. Mention key components or features if relevant
-4. Do not generate code unless specifically asked
-5. If information is insufficient, say so explicitly
+3. Use the code context to understand what the repository actually does
+4. Mention key components or features if evident from the code
+5. If you can infer functionality from the code structure, explain it
+6. Do not generate code unless specifically asked
+7. If information is insufficient, say what specific information is missing
 """
         
         return self.llm.explain(prompt)
@@ -72,26 +99,34 @@ Instructions:
         
         context = self.memory.get_context_for_query(query)
         
+        # Get retrieved symbols if available
+        retrieved_symbols = repo_context.get('retrieved_symbols', [])
+        code_context = self._format_retrieved_symbols(retrieved_symbols)
+        
         prompt = f"""
 Context: {context}
 
 Issue: {query}
 
+Relevant Code Context:
+{code_context}
+
 Instructions:
 1. Provide step-by-step guidance on how to approach fixing this issue
-2. Suggest debugging strategies and investigation methods
-3. Mention relevant files or areas to focus on (based on context)
-4. Do NOT provide complete code solutions
-5. Provide small code snippets only if absolutely necessary for illustration
-6. Focus on the methodology and approach
-7. If more information is needed, specify what to look for
+2. Use the code context to identify specific areas to focus on
+3. Suggest debugging strategies and investigation methods
+4. Mention relevant files or areas to focus on (based on context and retrieved code)
+5. Do NOT provide complete code solutions
+6. Provide small code snippets only if absolutely necessary for illustration
+7. Focus on the methodology and approach
+8. If more information is needed, specify what to look for
 
 Format:
 ## Approach Strategy
 [Step-by-step methodology]
 
 ## Areas to Investigate
-[List specific files/components to check]
+[List specific files/components to check based on retrieved context]
 
 ## Debugging Tips
 [Specific suggestions for debugging]
@@ -104,22 +139,30 @@ Format:
         
         context = self.memory.get_context_for_query(query)
         
+        # Get retrieved symbols if available
+        retrieved_symbols = repo_context.get('retrieved_symbols', [])
+        code_context = self._format_retrieved_symbols(retrieved_symbols)
+        
         prompt = f"""
 Context: {context}
 
 Coding Question: {query}
 
+Relevant Code Context:
+{code_context}
+
 Instructions:
 1. Provide clear guidance on how to implement the requested functionality
-2. Include small, relevant code snippets (2-10 lines max) if helpful
-3. Explain the concepts and approach
-4. Reference relevant files or functions from the repository if applicable
-5. Do NOT provide complete solutions or large code blocks
-6. Focus on teaching the approach and concepts
+2. Use the retrieved code context to understand the repository's patterns and conventions
+3. Include small, relevant code snippets (2-10 lines max) if helpful
+4. Explain the concepts and approach
+5. Reference relevant files or functions from the repository if applicable (based on retrieved context)
+6. Do NOT provide complete solutions or large code blocks
+7. Focus on teaching the approach and concepts
 
 Format:
 ## Approach
-[Explanation of the method]
+[Explanation of the method based on repository patterns]
 
 ## Key Concepts
 [Important concepts to understand]
@@ -128,7 +171,7 @@ Format:
 [Small code example if applicable]
 
 ## Relevant Areas
-[Files/functions to reference in the repo]
+[Files/functions to reference in the repo based on retrieved context]
 """
         
         return self.llm.explain(prompt)
@@ -138,17 +181,25 @@ Format:
         
         context = self.memory.get_context_for_query(query)
         
+        # Get retrieved symbols if available
+        retrieved_symbols = repo_context.get('retrieved_symbols', [])
+        code_context = self._format_retrieved_symbols(retrieved_symbols)
+        
         prompt = f"""
 Context: {context}
 
 Question: {query}
 
+Relevant Code Context:
+{code_context}
+
 Instructions:
-1. Answer based on the available context and repository information
-2. Be helpful and informative
-3. If the question requires more specific code analysis, suggest using the investigation feature
-4. Do not hallucinate information
-5. If you don't have enough information, say so explicitly
+1. Answer based on the available context, repository information, and retrieved code
+2. Use the retrieved code context to provide specific, informed answers
+3. Be helpful and informative
+4. If the question requires more specific code analysis, suggest using the investigation feature
+5. Do not hallucinate information
+6. If you don't have enough information, say so explicitly
 """
         
         return self.llm.explain(prompt)

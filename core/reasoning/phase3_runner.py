@@ -46,16 +46,26 @@ def run_phase3(repo_path: str, query: str, mode: str = "investigate"):
     if mode == "qa" or qa_system._classify_question(query) in ["general_repo", "how_to_fix", "coding_help"]:
         print("🤔 Processing general question...")
         
+        # Retrieve relevant symbols for context (even for Q&A)
+        print("🔍 Finding relevant code context...")
+        retrieved = retriever.query(query, top_k=3)  # Get fewer for Q&A
+        
+        # Debug info
+        print(f"📊 Retrieved {len(retrieved)} symbols")
+        if retrieved:
+            print(f"📝 Top result: {retrieved[0].get('file', 'Unknown')} - {retrieved[0].get('id', 'Unknown')}")
+        
         # Get basic repository context
         repo_context = {
             'name': repo_metadata.get('name', repo_name),
             'description': repo_metadata.get('description', ''),
             'language': repo_metadata.get('language', 'Unknown'),
-            'file_count': len(symbol_graph.get('symbols', []))
+            'file_count': len(symbol_graph.get('symbols', [])),
+            'retrieved_symbols': retrieved  # Add retrieved symbols for context
         }
         
         answer = qa_system.answer_question(query, repo_context)
-        memory.add_exchange(query, answer)
+        memory.add_exchange(query, answer, retrieved)
         
         print(f"\n💬 Answer:\n{answer}")
         return
