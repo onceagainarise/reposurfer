@@ -50,7 +50,7 @@ def run_embedding(repo_path: str):
             store.upsert(batch_ids, batch_vectors, batch_payloads)
             pbar.set_postfix({"stored": batch_end, "total": len(ids)})
 
-    print(f"[Phase2.3] ✅ Embedded and stored {len(vectors)} symbols")
+    print(f"[Phase2.3] Embedded and stored {len(vectors)} symbols")
 
 if __name__ == "__main__":
     run_embedding("storage/repos/psf__requests")

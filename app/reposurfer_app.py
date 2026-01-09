@@ -19,11 +19,11 @@ class RepoSurferApp:
         
         # Progress tracking
         phases = [
-            ("📥 Phase 0: Cloning repository...", "Cloning and fetching metadata"),
-            ("🔍 Phase 1: Analyzing code structure...", "Parsing Python files and extracting symbols"),
-            ("🔗 Phase 1.7: Building symbol graph...", "Creating symbol relationships"),
-            ("🧠 Phase 2: Building semantic index...", "Creating symbol chunks"),
-            ("⚡ Phase 2.3: Generating embeddings...", "Vectorizing symbols and storing in database")
+            (" Phase 0: Cloning repository...", "Cloning and fetching metadata"),
+            (" Phase 1: Analyzing code structure...", "Parsing Python files and extracting symbols"),
+            (" Phase 1.7: Building symbol graph...", "Creating symbol relationships"),
+            (" Phase 2: Building semantic index...", "Creating symbol chunks"),
+            (" Phase 2.3: Generating embeddings...", "Vectorizing symbols and storing in database")
         ]
         
         with tqdm(phases, desc="RepoSurfer Progress", unit="phase") as pbar:
@@ -55,8 +55,8 @@ class RepoSurferApp:
             run_embedding(str(repo_dir))
             pbar.update(1)
 
-        print(f"\n✅ Repository '{owner}/{name}' indexed successfully!")
-        print(f"📍 Stored at: {repo_dir}")
+        print(f"\n Repository '{owner}/{name}' indexed successfully!")
+        print(f" Stored at: {repo_dir}")
         print("\nYou can now:")
         print(f"  • reposurfer chat {name} \"your question\"")
         print(f"  • reposurfer interactive {name}")
@@ -82,10 +82,10 @@ class RepoSurferApp:
         
         repos = [p for p in self.storage_root.iterdir() if p.is_dir()]
         if not repos:
-            print("📁 No repositories found. Use 'index_repo' to add repositories.")
+            print(" No repositories found. Use 'index_repo' to add repositories.")
             return
         
-        print("📚 Indexed repositories:")
+        print(" Indexed repositories:")
         for repo in repos:
             print(f"  • {repo.name}")
     

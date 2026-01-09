@@ -30,7 +30,7 @@ def run_phase2(repo_path: str):
     with open(out_path, "w") as f:
         json.dump(chunks, f, indent=2)
 
-    print(f"[Phase2] ✅ Built {len(chunks)} symbol chunks")
+    print(f"[Phase2] Built {len(chunks)} symbol chunks")
 
 if __name__ == "__main__":
     run_phase2("storage/repos/psf__requests")
