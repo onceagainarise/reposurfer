@@ -15,7 +15,7 @@ class RepoSurferApp:
         """
         Full indexing pipeline (Phase 0 → Phase 2.3) with progress tracking
         """
-        print("🚀 Starting repository indexing...")
+        print(" Starting repository indexing...")
         
         # Progress tracking
         phases = [
@@ -77,7 +77,7 @@ class RepoSurferApp:
     def list_repositories(self):
         """List all indexed repositories"""
         if not self.storage_root.exists():
-            print("📁 No repositories found. Use 'index_repo' to add repositories.")
+            print(" No repositories found. Use 'index_repo' to add repositories.")
             return
         
         repos = [p for p in self.storage_root.iterdir() if p.is_dir()]
