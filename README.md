@@ -214,3 +214,7 @@ the main concerns regarding the mvp are four which are as follows:
 3) Expand Q&A capabilities to handle general repo questions and guidance without code generation.
 
 4) Simplify CLI interface and commands for better user experience.
+
+expanded the q&a capablities of the reposurfer and added the contextual memory along with more detailed explainiations.
+and now we would start contverting this into a library to enhance its cli interface
+
