@@ -27,30 +27,31 @@ def run_embedding(repo_path: str):
     # Progress bar for embedding generation
     embedder = EmbeddingGenerator()
     
-    # Show progress for embedding generation
-    with tqdm(texts, desc="Generating embeddings", unit="chunk") as pbar:
-        vectors = []
-        for text in pbar:
-            vector = embedder.embed([text])[0]
-            vectors.append(vector)
-            pbar.set_postfix({"dim": len(vector)})
-
+    # Generate all embeddings at once (more efficient)
+    print(f"[Phase2.3] Generating embeddings for {len(texts)} chunks...")
+    vectors = embedder.embed(texts)
+    
     print(f"[Phase2.3] Storing vectors in database...")
     store = VectorStore(collection_name=repo_name)
     store.create(vector_size=len(vectors[0]))
     
-    # Progress bar for storing
-    with tqdm(range(0, len(ids), 100), desc="Storing in database", unit="batch") as pbar:
+    # Store in batches of 100
+    batch_size = 100
+    total_batches = (len(ids) + batch_size - 1) // batch_size
+    
+    with tqdm(range(total_batches), desc="Storing in database", unit="batch") as pbar:
         for i in pbar:
-            batch_end = min(i + 100, len(ids))
-            batch_ids = ids[i:batch_end]
-            batch_vectors = vectors[i:batch_end]
-            batch_payloads = payloads[i:batch_end]
+            start_idx = i * batch_size
+            end_idx = min((i + 1) * batch_size, len(ids))
+            
+            batch_ids = ids[start_idx:end_idx]
+            batch_vectors = vectors[start_idx:end_idx]
+            batch_payloads = payloads[start_idx:end_idx]
             
             store.upsert(batch_ids, batch_vectors, batch_payloads)
-            pbar.set_postfix({"stored": batch_end, "total": len(ids)})
+            pbar.set_postfix({"stored": end_idx, "total": len(ids)})
 
-    print(f"[Phase2.3] Embedded and stored {len(vectors)} symbols")
+    print(f"[Phase2.3] ✅ Embedded and stored {len(vectors)} symbols")
 
 if __name__ == "__main__":
     run_embedding("storage/repos/psf__requests")

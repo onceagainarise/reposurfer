@@ -77,18 +77,31 @@ Examples:
         list_repositories()
 
 def find_repo_path(repo_name: str) -> str:
-    """Find repository path by name"""
+    """Find repository path by name with better matching"""
     storage_root = Path("storage/repos")
     
-    # Try exact match
+    # Try exact match first
     exact_path = storage_root / repo_name
     if exact_path.exists():
         return str(exact_path)
     
     # Try pattern matching (owner__repo format)
     for path in storage_root.iterdir():
-        if path.is_dir() and repo_name.lower() in path.name.lower():
-            return str(path)
+        if path.is_dir():
+            # Check if repo_name matches any part of the directory name
+            dir_name = path.name.lower()
+            search_name = repo_name.lower()
+            
+            # Handle various separators
+            normalized_dir = dir_name.replace("__", "/").replace("_", "/").replace("-", "/")
+            normalized_search = search_name.replace("__", "/").replace("_", "/").replace("-", "/")
+            
+            # Check if search name is contained in dir name or vice versa
+            if (search_name in dir_name.lower() or 
+                dir_name.lower() in search_name or
+                normalized_search in normalized_dir or
+                normalized_dir in normalized_search):
+                return str(path)
     
     return None
 

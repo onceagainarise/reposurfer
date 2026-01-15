@@ -82,14 +82,35 @@ Repository Information:
 Relevant Code Context:
 {code_context}
 
-Instructions:
-1. Provide a clear, concise answer about the repository based on ALL available information
-2. Focus on the main purpose and functionality
-3. Use the code context to understand what the repository actually does
-4. Mention key components or features if evident from the code
-5. If you can infer functionality from the code structure, explain it
-6. Do not generate code unless specifically asked
-7. If information is insufficient, say what specific information is missing
+CRITICAL INSTRUCTIONS:
+1. Provide a COMPREHENSIVE overview of this repository based on ALL available information
+2. Analyze the code structure, imports, and patterns to understand the repository's purpose
+3. Identify the main functionality and key features from the code evidence
+4. Explain what problems this repository solves or what it enables users to do
+5. Describe the architecture and main components in detail
+6. If it's a tool, library, or application, explain its use case
+7. Use specific examples from the code to support your analysis
+8. Be thorough and detailed - this is likely the user's first interaction with this repo
+9. If you can infer the project's domain (e.g., web scraping, data analysis, ML, etc.), state it clearly
+
+Format your response as:
+## 🎯 Repository Overview
+[Clear, concise summary of what this repository does]
+
+## 🏗️ Architecture & Structure
+[Main components and how they work together]
+
+## ⚡ Key Features & Functionality
+[What this code enables users to accomplish]
+
+## 📁 Code Analysis
+[Insights from the actual code structure and patterns]
+
+## 🔍 Domain & Use Case
+[What problem domain this addresses and who would use it]
+
+## 💡 Key Insights
+[Important observations about the codebase]
 """
         
         return self.llm.explain(prompt)
@@ -111,25 +132,35 @@ Issue: {query}
 Relevant Code Context:
 {code_context}
 
-Instructions:
-1. Provide step-by-step guidance on how to approach fixing this issue
-2. Use the code context to identify specific areas to focus on
-3. Suggest debugging strategies and investigation methods
-4. Mention relevant files or areas to focus on (based on context and retrieved code)
-5. Do NOT provide complete code solutions
-6. Provide small code snippets only if absolutely necessary for illustration
-7. Focus on the methodology and approach
-8. If more information is needed, specify what to look for
+COMPREHENSIVE GUIDANCE INSTRUCTIONS:
+1. Provide DETAILED, step-by-step guidance for addressing this issue
+2. Use the code context to identify specific problem areas and patterns
+3. Suggest concrete debugging strategies and investigation methods
+4. Recommend specific files, functions, or line numbers to examine
+5. Explain the technical approach needed to solve this type of issue
+6. If this is a common pattern, explain the typical solution approach
+7. Provide actionable next steps the user can take immediately
+8. Include specific code examples ONLY if absolutely necessary (2-5 lines max)
+9. Explain WHY this approach works and the reasoning behind it
 
-Format:
-## Approach Strategy
-[Step-by-step methodology]
+Format your response as:
+## 🔍 Issue Analysis
+[What the issue is and where it likely occurs]
 
-## Areas to Investigate
-[List specific files/components to check based on retrieved context]
+## 🛠️ Step-by-Step Solution Approach
+[Detailed methodology to fix the issue]
 
-## Debugging Tips
-[Specific suggestions for debugging]
+## 🎯 Investigation Areas
+[Specific files/lines to examine based on code context]
+
+## 🧠 Debugging Strategy
+[Technical approach to identify and resolve the problem]
+
+## 💡 Pro Tips
+[Best practices and common solutions for this type of issue]
+
+## ⚡ Immediate Actions
+[Concrete next steps the user can take right now]
 """
         
         return self.llm.explain(prompt)
